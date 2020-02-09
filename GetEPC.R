@@ -1,5 +1,6 @@
 library(httr)
 library(rlist)
+library(plyr)
 
 ## ********* Set API access Details *********
 # Grab EPC data from API
@@ -115,7 +116,7 @@ boxplot(EPCs_Expanded$`co2-emissions-current`,
         -EPCs_Expanded$`co2-emissions-improvement`,
         names=c('Current','Potential','Improvement'),
         main="Distribution of Current, Potential and Improvement for all Properties",
-        ylab="Emissions")
+        ylab="Emissions (Tonnes/year)")
 
 
 N_OffGas<-length(subset(EPCs_Expanded,`mains-gas-flag`=='N')[,1])
@@ -126,7 +127,7 @@ boxplot(-subset(EPCs_Expanded,`mains-gas-flag`=='Y')$`co2-emissions-improvement`
         -subset(EPCs_Expanded,`mains-gas-flag`=='N')$`co2-emissions-improvement`,
         names=c(paste('On the Gas Grid',' (',N_OnGas,' homes)',sep=''),paste('Off the Gas Grid',' (',N_OffGas,' homes)',sep='')),
         main="Potential Co2 Emissions Improvement On and Off the Gas Grid",
-        ylab="Emissions")
+        ylab="Emissions (Tonnes/year)")
 
 
 # Compare the Emissions for homes on and off the gas grid
@@ -134,7 +135,31 @@ boxplot(subset(EPCs_Expanded,`mains-gas-flag`=='Y')$`co2-emissions-current`,
         subset(EPCs_Expanded,`mains-gas-flag`=='N')$`co2-emissions-current`,
         names=c(paste('On the Gas Grid',' (',N_OnGas,' homes)',sep=''),paste('Off the Gas Grid',' (',N_OffGas,' homes)',sep='')),
         main="Potential Co2 Emissions Improvement On and Off the Gas Grid",
-        ylab="Emissions")
+        ylab="Emissions (Tonnes/year)")
+
+## ********* Plot Carbon Emissions for house type *********
+AveEmissions_Form <- ddply(EPCs_Expanded, .(`built-form`), function(x) mean(x$`co2-emiss-curr-per-floor-area`) )
+
+AveEmissions_Form<-AveEmissions_Form[order(AveEmissions_Form$V1,decreasing = TRUE),]
 
 
+# Angled Labels
+p<-barplot(subset(AveEmissions_Form,`built-form`!='NO DATA!')$`V1`,
+        main="Average CO2 Emissions by Household Type",
+        ylab="Emissions (kg/m2/year)",
+        col=topo.colors(6))
+axis(1,labels=FALSE,at=seq(0.02,8.2,1.22))
+text(p+0.4, -8,
+     labels=subset(AveEmissions_Form,`built-form`!='NO DATA!')$`built-form`,
+     srt=20, adj=1, xpd=TRUE)
 
+# Labels straight up
+p<-barplot(subset(AveEmissions_Form,`built-form`!='NO DATA!')$`V1`,
+           main="Average CO2 Emissions by Household Type",
+           ylab="Emissions (kg/m2/year)",
+           col=topo.colors(6))
+
+axis(1,labels=FALSE,lwd.ticks=0)
+text(p, 130,
+     labels=subset(AveEmissions_Form,`built-form`!='NO DATA!')$`built-form`,
+     srt=90, adj=1, xpd=TRUE)
