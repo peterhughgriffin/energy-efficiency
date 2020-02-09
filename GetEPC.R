@@ -1,6 +1,7 @@
 library(httr)
 library(rlist)
 
+
 ## ********* Set API access Details *********
 # Grab EPC data from API
 url  <- "https://epc.opendatacommunities.org/api/v1/domestic/search?postcode="
@@ -40,14 +41,15 @@ for (url in URLList){
 EPCs<-EPCs[!duplicated(EPCs$address) & order(EPCs$`inspection-date`,decreasing = TRUE),]
 
 # Remove data with 'False' EPC rating
-EPCs_Clean<-EPCs[EPCs$`current-energy-rating` != "FALSE" & EPCs$`potential-energy-rating` != "FALSE", ]
+EPCs<-EPCs[EPCs$`current-energy-rating` != "FALSE" & EPCs$`potential-energy-rating` != "FALSE", ]
 
 ## ********* Plot EPCs *********
 
 # Current EPCs
-
-EPC_Current<-table(EPCs[7])
-
+EPCs_Current<-table(EPCs[7])
 barplot(EPCs_Current)
 
+# Potential EPCs
+EPCs_Potential<-table(EPCs[8])
+barplot(EPCs_Potential)
 
