@@ -138,3 +138,59 @@ boxplot(subset(EPCs_Expanded,`mains-gas-flag`=='Y')$`co2-emissions-current`,
         main="Potential Co2 Emissions Improvement On and Off the Gas Grid",
         ylab="Emissions (Tonnes/year)")
 
+## ********* Plot Carbon Emissions for house type *********----
+AveEmissions_Form <- ddply(EPCs_Expanded, .(`built-form`), function(x) mean(x$`co2-emiss-curr-per-floor-area`) )
+
+AveEmissions_Form<-AveEmissions_Form[order(AveEmissions_Form$V1,decreasing = TRUE),]
+
+
+# Angled Labels
+p<-barplot(subset(AveEmissions_Form,`built-form`!='NO DATA!')$`V1`,
+           main="Average CO2 Emissions by Household Type",
+           ylab="Emissions (kg/m2/year)",
+           col=topo.colors(6))
+axis(1,labels=FALSE,at=seq(0.02,8.2,1.22))
+text(p+0.4, -8,
+     labels=subset(AveEmissions_Form,`built-form`!='NO DATA!')$`built-form`,
+     srt=20, adj=1, xpd=TRUE)
+
+# Labels straight up
+p<-barplot(subset(AveEmissions_Form,`built-form`!='NO DATA!')$`V1`,
+           main="Average CO2 Emissions by Household Type",
+           ylab="Emissions (kg/m2/year)",
+           col=topo.colors(6))
+
+axis(1,labels=FALSE,lwd.ticks=0)
+text(p, 130,
+     labels=subset(AveEmissions_Form,`built-form`!='NO DATA!')$`built-form`,
+     srt=90, adj=1, xpd=TRUE)
+
+## ********* Plot Carbon Emissions for house type *********----
+AveEmissions_Type <- ddply(EPCs_Expanded, .(`property-type`), function(x) mean(x$`co2-emiss-curr-per-floor-area`) )
+
+AveEmissions_Type<-AveEmissions_Type[order(AveEmissions_Form$V1,decreasing = TRUE),]
+
+
+# Angled Labels
+p<-barplot(subset(AveEmissions_Type,`property-type`!='NO DATA!')$`V1`,
+           main="Average CO2 Emissions by Property Type",
+           ylab="Emissions (kg/m2/year)",
+           col=topo.colors(6))
+axis(1,labels=FALSE,at=seq(0.02,6,1.22))
+text(p+0.2, -8,
+     labels=subset(AveEmissions_Type,`property-type`!='NO DATA!')$`property-type`,
+     srt=0, adj=1, xpd=TRUE)
+
+# Labels straight up
+p<-barplot(subset(AveEmissions_Type,`property-type`!='NO DATA!')$`V1`,
+           main="Average CO2 Emissions by Property Type",
+           ylab="Emissions (kg/m2/year)",
+           col=topo.colors(6))
+
+axis(1,labels=FALSE,lwd.ticks=0)
+text(p, 70,
+     labels=subset(AveEmissions_Type,`property-type`!='NO DATA!')$`property-type`,
+     srt=90, adj=1, xpd=TRUE)
+
+
+
