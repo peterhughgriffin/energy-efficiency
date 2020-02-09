@@ -94,7 +94,47 @@ boxplot(subset(EPCs_Expanded,`mains-gas-flag`=='Y')$`energy-efficiency-improveme
         ylab="Efficiency",
         ylim=c(0,130))
 
+## ********* Examine Carbon Emission Values *********
 
+# Calculate the improvement of energy efficiency 
+Improvement<-list(`co2-emissions-improvement`=EPCs$`co2-emissions-potential`-EPCs$`co2-emissions-current`)
+# Add it to the rest of the data
+EPCs_Expanded<-cbind(EPCs_Expanded,Improvement)
+
+
+# Produce boxplots
+boxplot(EPCs_Expanded$`co2-emissions-improvement`)
+
+boxplot(EPCs_Expanded$`co2-emissions-current`)
+
+boxplot(EPCs_Expanded$`co2-emissions-potential`)
+
+# Compare CO2 Emissions distributions of Current, Potential and improvement
+boxplot(EPCs_Expanded$`co2-emissions-current`,
+        EPCs_Expanded$`co2-emissions-potential`,
+        -EPCs_Expanded$`co2-emissions-improvement`,
+        names=c('Current','Potential','Improvement'),
+        main="Distribution of Current, Potential and Improvement for all Properties",
+        ylab="Emissions")
+
+
+N_OffGas<-length(subset(EPCs_Expanded,`mains-gas-flag`=='N')[,1])
+N_OnGas<-length(subset(EPCs_Expanded,`mains-gas-flag`=='Y')[,1])
+
+# Compare the potential improvement for homes on and off the gas grid
+boxplot(-subset(EPCs_Expanded,`mains-gas-flag`=='Y')$`co2-emissions-improvement`,
+        -subset(EPCs_Expanded,`mains-gas-flag`=='N')$`co2-emissions-improvement`,
+        names=c(paste('On the Gas Grid',' (',N_OnGas,' homes)',sep=''),paste('Off the Gas Grid',' (',N_OffGas,' homes)',sep='')),
+        main="Potential Co2 Emissions Improvement On and Off the Gas Grid",
+        ylab="Emissions")
+
+
+# Compare the Emissions for homes on and off the gas grid
+boxplot(subset(EPCs_Expanded,`mains-gas-flag`=='Y')$`co2-emissions-current`,
+        subset(EPCs_Expanded,`mains-gas-flag`=='N')$`co2-emissions-current`,
+        names=c(paste('On the Gas Grid',' (',N_OnGas,' homes)',sep=''),paste('Off the Gas Grid',' (',N_OffGas,' homes)',sep='')),
+        main="Potential Co2 Emissions Improvement On and Off the Gas Grid",
+        ylab="Emissions")
 
 
 
