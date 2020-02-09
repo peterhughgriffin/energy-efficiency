@@ -1,6 +1,6 @@
 library(httr)
 library(rlist)
-
+library(ggplot2)
 
 ## ********* Set API access Details *********
 # Grab EPC data from API
@@ -44,12 +44,18 @@ EPCs<-EPCs[!duplicated(EPCs$address) & order(EPCs$`inspection-date`,decreasing =
 EPCs<-EPCs[EPCs$`current-energy-rating` != "FALSE" & EPCs$`potential-energy-rating` != "FALSE", ]
 
 ## ********* Plot EPCs *********
+# Set colours for plotting EPCs
+EPC_col<-c("#007f3d","#2c9f29","#9dcb3c","#fff200","#f7af1d","#ed6823","#e31d23")
 
 # Current EPCs
 EPCs_Current<-table(EPCs[7])
-barplot(EPCs_Current)
+
+barplot(EPCs_Current, main="Distribution of Current EPC ratings",
+        xlab="EPC Rating", ylab="Number of Households",col=EPC_col)
 
 # Potential EPCs
 EPCs_Potential<-table(EPCs[8])
-barplot(EPCs_Potential)
+
+barplot(EPCs_Potential, main="Distribution of Potential EPC ratings",
+        xlab="EPC Rating", ylab="Number of Households",col=EPC_col)
 
