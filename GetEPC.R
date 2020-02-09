@@ -1,6 +1,5 @@
 library(httr)
 library(rlist)
-library(ggplot2)
 
 ## ********* Set API access Details *********
 # Grab EPC data from API
@@ -59,3 +58,17 @@ EPCs_Potential<-table(EPCs[8])
 barplot(EPCs_Potential, main="Distribution of Potential EPC ratings",
         xlab="EPC Rating", ylab="Number of Households",col=EPC_col)
 
+## ********* Examine Energy Efficiency Values *********
+
+# Calculate the improvement of energy efficiency 
+Improvement<-list(`energy-efficiency-improvement`=EPCs$`potential-energy-efficiency`-EPCs$`current-energy-efficiency`)
+# Add it to the rest of the data
+EPCs_Expanded<-cbind(EPCs,Improvement)
+
+
+
+boxplot(EPCs_Expanded$`energy-efficiency-improvement`)
+
+boxplot(EPCs_Expanded$`current-energy-efficiency`)
+
+boxplot(EPCs_Expanded$`potential-energy-efficiency`)
