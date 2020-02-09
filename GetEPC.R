@@ -66,9 +66,35 @@ Improvement<-list(`energy-efficiency-improvement`=EPCs$`potential-energy-efficie
 EPCs_Expanded<-cbind(EPCs,Improvement)
 
 
-
+# Produce boxplots
 boxplot(EPCs_Expanded$`energy-efficiency-improvement`)
 
 boxplot(EPCs_Expanded$`current-energy-efficiency`)
 
 boxplot(EPCs_Expanded$`potential-energy-efficiency`)
+
+# Compare energy efficiency distributions of Current, Potential and improvement
+boxplot(EPCs_Expanded$`current-energy-efficiency`,
+        EPCs_Expanded$`potential-energy-efficiency`,
+        EPCs_Expanded$`energy-efficiency-improvement`,
+        names=c('Current','Potential','Improvement'),
+        main="Distribution of Current, Potential and Improvement for all Properties",
+        ylab="Efficiency",
+        ylim=c(0,130))
+
+
+N_OffGas<-length(subset(EPCs_Expanded,`mains-gas-flag`=='N')[,1])
+N_OnGas<-length(subset(EPCs_Expanded,`mains-gas-flag`=='Y')[,1])
+
+# Compare the potential improvement for homes on and off the gas grid
+boxplot(subset(EPCs_Expanded,`mains-gas-flag`=='Y')$`energy-efficiency-improvement`,
+        subset(EPCs_Expanded,`mains-gas-flag`=='N')$`energy-efficiency-improvement`,
+        names=c(paste('On the Gas Grid',' (',N_OnGas,' homes)',sep=''),paste('Off the Gas Grid',' (',N_OffGas,' homes)',sep='')),
+        main="Potential Efficiency Improvement On and Off the Gas Grid",
+        ylab="Efficiency",
+        ylim=c(0,130))
+
+
+
+
+
