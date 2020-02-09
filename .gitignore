@@ -3,6 +3,8 @@
 .RData
 .Ruserdata
 
+# Project File
+*.Rproj
 
 # Data files
 *.csv
