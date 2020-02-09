@@ -1,8 +1,9 @@
+## ********* Import Libraries *********----
 library(httr)
 library(rlist)
 library(plyr)
 
-## ********* Set API access Details *********
+## ********* Set API access Details *********----
 # Grab EPC data from API
 url  <- "https://epc.opendatacommunities.org/api/v1/domestic/search?postcode="
 # Get the API credentials
@@ -11,7 +12,7 @@ api_key<-paste(Creds[1,1])
 user<-paste(Creds[1,2])
 pass<-paste(Creds[1,3])
 
-## ********* Grab Post Codes *********
+## ********* Grab Post Codes *********----
 
 # Got Post codes of the LSOA in question from here: https://www.doogal.co.uk/LSOA.php?code=E01027381
 # Import this data
@@ -35,7 +36,7 @@ for (url in URLList){
     }
 }
 
-## ********* Clean Data *********
+## ********* Clean Data *********----
 
 # Remove older EPCs from duplicated addresses
 EPCs<-EPCs[!duplicated(EPCs$address) & order(EPCs$`inspection-date`,decreasing = TRUE),]
@@ -43,7 +44,7 @@ EPCs<-EPCs[!duplicated(EPCs$address) & order(EPCs$`inspection-date`,decreasing =
 # Remove data with 'False' EPC rating
 EPCs<-EPCs[EPCs$`current-energy-rating` != "FALSE" & EPCs$`potential-energy-rating` != "FALSE", ]
 
-## ********* Plot EPCs *********
+## ********* Plot EPCs *********----
 # Set colours for plotting EPCs
 EPC_col<-c("#007f3d","#2c9f29","#9dcb3c","#fff200","#f7af1d","#ed6823","#e31d23")
 
@@ -59,7 +60,7 @@ EPCs_Potential<-table(EPCs[8])
 barplot(EPCs_Potential, main="Distribution of Potential EPC ratings",
         xlab="EPC Rating", ylab="Number of Households",col=EPC_col)
 
-## ********* Examine Energy Efficiency Values *********
+## ********* Examine Energy Efficiency Values *********----
 
 # Calculate the improvement of energy efficiency 
 Improvement<-list(`energy-efficiency-improvement`=EPCs$`potential-energy-efficiency`-EPCs$`current-energy-efficiency`)
@@ -95,9 +96,9 @@ boxplot(subset(EPCs_Expanded,`mains-gas-flag`=='Y')$`energy-efficiency-improveme
         ylab="Efficiency",
         ylim=c(0,130))
 
-## ********* Examine Carbon Emission Values *********
+## ********* Examine Carbon Emission Values *********----
 
-# Calculate the improvement of energy efficiency 
+# Calculate the improvement of emissions
 Improvement<-list(`co2-emissions-improvement`=EPCs$`co2-emissions-potential`-EPCs$`co2-emissions-current`)
 # Add it to the rest of the data
 EPCs_Expanded<-cbind(EPCs_Expanded,Improvement)
@@ -137,29 +138,3 @@ boxplot(subset(EPCs_Expanded,`mains-gas-flag`=='Y')$`co2-emissions-current`,
         main="Potential Co2 Emissions Improvement On and Off the Gas Grid",
         ylab="Emissions (Tonnes/year)")
 
-## ********* Plot Carbon Emissions for house type *********
-AveEmissions_Form <- ddply(EPCs_Expanded, .(`built-form`), function(x) mean(x$`co2-emiss-curr-per-floor-area`) )
-
-AveEmissions_Form<-AveEmissions_Form[order(AveEmissions_Form$V1,decreasing = TRUE),]
-
-
-# Angled Labels
-p<-barplot(subset(AveEmissions_Form,`built-form`!='NO DATA!')$`V1`,
-        main="Average CO2 Emissions by Household Type",
-        ylab="Emissions (kg/m2/year)",
-        col=topo.colors(6))
-axis(1,labels=FALSE,at=seq(0.02,8.2,1.22))
-text(p+0.4, -8,
-     labels=subset(AveEmissions_Form,`built-form`!='NO DATA!')$`built-form`,
-     srt=20, adj=1, xpd=TRUE)
-
-# Labels straight up
-p<-barplot(subset(AveEmissions_Form,`built-form`!='NO DATA!')$`V1`,
-           main="Average CO2 Emissions by Household Type",
-           ylab="Emissions (kg/m2/year)",
-           col=topo.colors(6))
-
-axis(1,labels=FALSE,lwd.ticks=0)
-text(p, 130,
-     labels=subset(AveEmissions_Form,`built-form`!='NO DATA!')$`built-form`,
-     srt=90, adj=1, xpd=TRUE)
