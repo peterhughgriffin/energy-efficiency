@@ -39,8 +39,8 @@ for (url in URLList){
 # Remove older EPCs from duplicated addresses
 EPCs<-EPCs[!duplicated(EPCs$address) & order(EPCs$`inspection-date`,decreasing = TRUE),]
 
-
-
+# Remove data with 'False' EPC rating
+EPCs_Clean<-EPCs[EPCs$`current-energy-rating` != "FALSE" & EPCs$`potential-energy-rating` != "FALSE", ]
 
 ## ********* Plot EPCs *********
 
