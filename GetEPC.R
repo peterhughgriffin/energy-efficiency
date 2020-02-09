@@ -1,0 +1,35 @@
+library(httr)
+library(rlist)
+
+## ********* Set API access Details *********
+# Grab EPC data from API
+url  <- "https://epc.opendatacommunities.org/api/v1/domestic/search?postcode="
+# Get the API credentials
+Creds = read.csv("Credentials.csv")
+api_key<-paste(Creds[1])
+user<-paste(Creds[2])
+pass<-paste(Creds[3])
+
+## ********* Grab Post Codes *********
+
+# Got Post codes of the LSOA in question from here: https://www.doogal.co.uk/LSOA.php?code=E01027381
+# Import this data
+setwd("C:/Users/Peter/Documents/GIS/HousingStock/Data/Northumberland")   # set working directory
+PostCodes = read.csv("Northumberland 003C postcodes.csv")  # read csv file 
+
+
+URLList<-paste(url,PostCodes[,1],sep="")
+URLList<-gsub(" ", "", URLList, fixed = TRUE) # Remove space from post code
+
+for (url in URLList){
+    # Grab EPC data from API
+    EPC <- GET(url, authenticate(user, pass, type = "basic"),
+               add_headers(accept="text/csv", auth_appkey = api_key, "COLUMN_NAME" = "CURRENT_ENERGY_RATING"))
+    stop_for_status(EPC)
+    Result = as.data.frame(content(EPC))
+    if (exists("EPCs")){
+      EPCs<-rbind(EPCs,Result)
+    }    else {
+      EPCs<-Result
+    }
+}

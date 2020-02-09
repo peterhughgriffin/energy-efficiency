@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+
+# Data files
+*.csv
+*.xlsx
+*.xls
+*.zip
+
+# Credentials for accessing API
+Credentials.csv
