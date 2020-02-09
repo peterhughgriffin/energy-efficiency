@@ -6,9 +6,9 @@ library(rlist)
 url  <- "https://epc.opendatacommunities.org/api/v1/domestic/search?postcode="
 # Get the API credentials
 Creds = read.csv("Credentials.csv")
-api_key<-paste(Creds[1])
-user<-paste(Creds[2])
-pass<-paste(Creds[3])
+api_key<-paste(Creds[1,1])
+user<-paste(Creds[1,2])
+pass<-paste(Creds[1,3])
 
 ## ********* Grab Post Codes *********
 
@@ -33,3 +33,21 @@ for (url in URLList){
       EPCs<-Result
     }
 }
+
+## ********* Clean Data *********
+
+# Remove older EPCs from duplicated addresses
+EPCs<-EPCs[!duplicated(EPCs$address) & order(EPCs$`inspection-date`,decreasing = TRUE),]
+
+
+
+
+## ********* Plot EPCs *********
+
+# Current EPCs
+
+EPC_Current<-table(EPCs[7])
+
+barplot(EPCs_Current)
+
+
