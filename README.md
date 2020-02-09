@@ -1,4 +1,4 @@
-# EPC Plotter
+# Energy Efficiency
 
 This project uses R to explore data relating to UK housing stock, energy eficiency and fuel poverty.
 
