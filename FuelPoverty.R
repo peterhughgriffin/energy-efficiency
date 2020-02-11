@@ -28,16 +28,18 @@ HouseholdType_Exp<-cbind(HouseholdType,Share_FP)
 
 #Plot Function
 
-Plot_FP<-function(Table,Lab_Title,Lab_x,Lab_y,Lab_tilt,Align){
+Plot_FP<-function(Table,Lab_Title,Lab_x,Lab_y,Lab_tilt,Align,Order){
   Len<-nrow(Table)
   Wid<-ncol(Table)
   Temp<-Table[-Len,]
-  
+  if (Order){
+    Temp<-Temp[order(Temp$Share_FuelPoor_pc,decreasing = TRUE),]
+  }
   
   x11(width=9, height=6, pointsize=12)
   par(mar=c(10,5,2,5))
   
-  p<-barplot(Temp$Share_FuelPoor_pc[order(Temp$Share_FuelPoor_pc,decreasing = TRUE)],
+  p<-barplot(Temp$Share_FuelPoor_pc,
              width=Wid/Len,
              main=Lab_Title,
              ylab=Lab_y,
@@ -49,13 +51,16 @@ Plot_FP<-function(Table,Lab_Title,Lab_x,Lab_y,Lab_tilt,Align){
              cex.lab=2)
   axis(1,labels=FALSE,at=p)
   text(p+Align, -3,
-       labels=Temp[order(Temp$Share_FuelPoor_pc,decreasing = TRUE),1],
+       labels=Temp[,1],
        srt=Lab_tilt, adj=1, xpd=TRUE,cex=2)
-  text(p+0.5, 3+Temp$Share_FuelPoor_pc[order(Temp$Share_FuelPoor_pc,decreasing = TRUE)],
-       labels=paste(round(Temp$Share_FuelPoor_pc[order(Temp$Share_FuelPoor_pc,decreasing = TRUE)],1),'%'),
+  text(p+0.5, 3+Temp$Share_FuelPoor_pc,
+       labels=paste(round(Temp$Share_FuelPoor_pc,1),'%'),
        srt=0, adj=1, xpd=TRUE,cex=2)
 }
 
-Plot_FP(Tenure_Exp,"Fuel Poverty by Tenure","","Proportion Fuel Poor (%)",7,0.6)
-Plot_FP(HouseholdSize_Exp,"Fuel Poverty by Household Size","Household Size","Proportion Fuel Poor (%)",0,0.07)
-# Plot_FP(HouseholdType_Exp,"Fuel Poverty by Household Type","","Proportion Fuel Poor (%)",15,0.5)
+Plot_FP(Tenure_Exp,"Fuel Poverty by Tenure","","Proportion Fuel Poor (%)",7,0.6,TRUE)
+Plot_FP(HouseholdSize_Exp,"Fuel Poverty by Household Size","Household Size","Proportion Fuel Poor (%)",0,0.07,FALSE)
+# Plot_FP(HouseholdType_Exp,"Fuel Poverty by Household Type","","Proportion Fuel Poor (%)",15,0.5,TRUE)
+
+
+
