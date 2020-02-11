@@ -1,6 +1,3 @@
-library(waffle) # For square (or Waffle) plots
-library(ggplot2)
-
 # Import data
 setwd("C:/Users/Peter/Documents/GIS/HousingStock/Data/Fuel_Poverty_2019")   # set working directory
 
@@ -31,7 +28,7 @@ HouseholdType_Exp<-cbind(HouseholdType,Share_FP)
 
 #Plot Function
 
-Plot_FP<-function(Table,Lab_Title,Lab_y,Lab_tilt,Align){
+Plot_FP<-function(Table,Lab_Title,Lab_x,Lab_y,Lab_tilt,Align){
   Len<-nrow(Table)
   Wid<-ncol(Table)
   Temp<-Table[-Len,]
@@ -44,18 +41,21 @@ Plot_FP<-function(Table,Lab_Title,Lab_y,Lab_tilt,Align){
              width=Wid/Len,
              main=Lab_Title,
              ylab=Lab_y,
-             col=topo.colors(4),
+             xlab=Lab_x,
+             col=heat.colors(Len),
              ylim=c(0,max(Temp$Share_FuelPoor_pc)+10),
-             xlim=c(0,Wid))
+             xlim=c(0,Wid),
+             cex.axis=2,
+             cex.lab=2)
   axis(1,labels=FALSE,at=p)
   text(p+Align, -3,
-       labels=Temp[,1],
-       srt=Lab_tilt, adj=1, xpd=TRUE)
+       labels=Temp[order(Temp$Share_FuelPoor_pc,decreasing = TRUE),1],
+       srt=Lab_tilt, adj=1, xpd=TRUE,cex=2)
   text(p+0.5, 3+Temp$Share_FuelPoor_pc[order(Temp$Share_FuelPoor_pc,decreasing = TRUE)],
        labels=paste(round(Temp$Share_FuelPoor_pc[order(Temp$Share_FuelPoor_pc,decreasing = TRUE)],1),'%'),
-       srt=0, adj=1, xpd=TRUE)
+       srt=0, adj=1, xpd=TRUE,cex=2)
 }
 
-Plot_FP(Tenure_Exp,"Fuel Poverty by Tenure","Fuel Poor (%)",15,0.5)
-Plot_FP(HouseholdSize_Exp,"Fuel Poverty by Household Size","Fuel Poor (%)",0,0)
-Plot_FP(HouseholdType_Exp,"Fuel Poverty by Household Type","Fuel Poor (%)",15,0.5)
+Plot_FP(Tenure_Exp,"Fuel Poverty by Tenure","","Proportion Fuel Poor (%)",7,0.6)
+Plot_FP(HouseholdSize_Exp,"Fuel Poverty by Household Size","Household Size","Proportion Fuel Poor (%)",0,0.07)
+# Plot_FP(HouseholdType_Exp,"Fuel Poverty by Household Type","","Proportion Fuel Poor (%)",15,0.5)
