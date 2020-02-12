@@ -4,25 +4,27 @@ setwd("C:/Users/Peter/Documents/GIS/HousingStock/Data/Fuel_Poverty_2019")   # se
 Tenure = read.csv("Tenure.csv")  # read csv file 
 HouseholdSize = read.csv("HouseholdSize.csv")  # read csv file 
 HouseholdType = read.csv("HouseholdType.csv")  # read csv file 
+EPC = read.csv("EPC.csv")  # read csv file 
+GasGrid = read.csv("GasGrid.csv")  # read csv file 
 
-# Calculate the percentages ----
 
-# Add in Percentage Share columns
+# Calculate the percentage share ----
 
-# Tenure
-Share_FP<-list(`Share_FuelPoor_pc`=100*Tenure$Number.fuel.poor..000s./Tenure$Number.fuel.poor..000s.[length(Tenure$Number.fuel.poor..000s.)])
-# Add it to the rest of the data
-Tenure_Exp<-cbind(Tenure,Share_FP)
+# Function
+AddPCCol<-function(Table){
+  # Calculate pc share
+  Share_FP<-list(`Share_FuelPoor_pc`=100*Table$Number.fuel.poor..000s./Table$Number.fuel.poor..000s.[length(Table$Number.fuel.poor..000s.)])
+  # Add it to the rest of the data
+  Table_Exp<-cbind(Table,Share_FP)
+}
 
-# Size
-Share_FP<-list(`Share_FuelPoor_pc`=100*HouseholdSize$Number.fuel.poor..000s./HouseholdSize$Number.fuel.poor..000s.[length(HouseholdSize$Number.fuel.poor..000s.)])
-# Add it to the rest of the data
-HouseholdSize_Exp<-cbind(HouseholdSize,Share_FP)
+# Apply function to each dataset
+Tenure_Exp<-AddPCCol(Tenure)
+HouseholdSize_Exp<-AddPCCol(HouseholdSize)
+HouseholdType_Exp<-AddPCCol(HouseholdType)
+EPC_Exp<-AddPCCol(EPC)
+GasGrid_Exp<-AddPCCol(GasGrid)
 
-# Type
-Share_FP<-list(`Share_FuelPoor_pc`=100*HouseholdType$Number.fuel.poor..000s./HouseholdType$Number.fuel.poor..000s.[length(HouseholdType$Number.fuel.poor..000s.)])
-# Add it to the rest of the data
-HouseholdType_Exp<-cbind(HouseholdType,Share_FP)
 
 # Plotting ----
 
@@ -65,11 +67,14 @@ Plot_FP<-function(Table,Column,Lab_Title,Lab_x,Lab_y,Lab_tilt,Align,Order,LabStr
 # Plot_FP(HouseholdType_Exp,6,"Fuel Poverty by Household Type","","Proportion Fuel Poor (%)",15,0.5,TRUE,'%')
 
 # Number Fuel Poor
-Plot_FP(Tenure_Exp,5,"Fuel Poverty by Tenure","","Number of Fuel Poor",7,0.6,TRUE,'')
-Plot_FP(HouseholdSize_Exp,5,"Fuel Poverty by Household Size","Household Size","Number of Fuel Poor",0,0.07,FALSE,'')
+# Plot_FP(Tenure_Exp,5,"Fuel Poverty by Tenure","","Number of Fuel Poor",7,0.6,TRUE,'')
+# Plot_FP(HouseholdSize_Exp,5,"Fuel Poverty by Household Size","Household Size","Number of Fuel Poor",0,0.07,FALSE,'')
 # Plot_FP(HouseholdType_Exp,5,"Fuel Poverty by Household Type","","Number of Fuel Poor",15,0.5,TRUE,'')
 
 # Percentage Fuel Poor
 Plot_FP(Tenure_Exp,3,"Fuel Poverty by Tenure","","Proportion Fuel Poor (%)",7,0.6,TRUE,'%')
 Plot_FP(HouseholdSize_Exp,3,"Fuel Poverty by Household Size","Household Size","Proportion Fuel Poor (%)",0,0.07,FALSE,'%')
 # Plot_FP(HouseholdType_Exp,3,"Fuel Poverty by Household Type","","Proportion Fuel Poor (%)",15,0.5,TRUE,'%')
+Plot_FP(EPC_Exp,3,"Fuel Poverty by EPC Rating","","Proportion Fuel Poor (%)",0,0,FALSE,'%')
+Plot_FP(GasGrid_Exp,3,"Fuel Poverty by Mains Gas Connection","On the Gas Grid","Proportion Fuel Poor (%)",0,0.07,FALSE,'%')
+
